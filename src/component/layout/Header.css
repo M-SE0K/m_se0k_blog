@@ -1,0 +1,37 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  
+  }
+  
+  /* 기본 설정 */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #202020;
+    color: #e5e5e5;
+  }
+
+.app-header {
+    display: flex;  /* Flexbox 적용 */
+    justify-content: space-between; /* 양쪽 끝으로 배치 */
+    align-items: center; /* 세로 중앙 정렬 */
+    width: 100%; /* 가로 전체 */
+    padding: 10px; /* 내부 여백 */
+    background-color: #783e3e; /* 배경색 추가 */
+    height: 50px;
+
+}
+
+.nav-links{
+    display: flex;  /* Flexbox 적용 */
+    align-items: center; /* 세로 중앙 정렬 */
+    width: 100%; /* 가로 전체 */
+    padding: 20px; /* 내부 여백 */
+    gap: 20px;
+}
+
+.login-logout-button{
+    padding: 10px;
+    
+}
