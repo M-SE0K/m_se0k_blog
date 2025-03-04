@@ -1,75 +1,146 @@
-import React, { useState, useNavigate } from "react";
-import { Modal } from "react-bootstrap";
-//first commit
-const LoginSignup = () => {
-    //로그인 및 회원가입 공통 핖드
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthUtil } from "../AuthUtil";
+import "./Signin.css";
+
+const Signin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loginCheck, setLoginCheck] = useState('');
-    
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 저장
 
-
-    //로그인 성공 및 실패시 네비게이션
-    const navigate = useNavigate(); 
-
-    const handleLogin = async (event)=>{
-        //로그인 핸들러 (비동기 처리)
-        event.preventDefault();
-        await new Promise((r) => setTimeout(r, 1000));
-
-        const response = await fetch(
-            "로그인 서버 주소",
-            {
-
-            }
-        )
-    }
-    
-    //폼 동적 렌더링
+    const navigate = useNavigate();
     const [mode, setMode] = useState("signin");
-    const [show, setShow] = useState(true);
 
-    const handleShow = () => setShow(true);
-    const handleClose = () => setShow(false);
+    // 로그인 상태 확인 후 자동 로그인 유지
+    useEffect(() => {
+        if (AuthUtil.isAuthenticated()) {
+            setIsLoggedIn(true);
+        }
+    }, []);
+
+    /**
+     * 로그인 핸들러
+     * - `AuthUtil.login`을 호출하여 토큰 기반 로그인 처리
+     * - 로그인 성공 시 로그인 상태를 true로 변경
+     */
+    const handleLogin = (event) => {
+        event.preventDefault();
+        const result = AuthUtil.login(email, password);
+        if (result.success) {
+            alert(result.message);
+            setIsLoggedIn(true); // 로그인 상태 변경
+            navigate("/home"); // 로그인 성공 시 홈 화면 이동
+        } else {
+            setErrorMessage(result.message);
+        }
+    };
+
+    /**
+     * 회원가입 핸들러
+     * - 비밀번호 일치 여부 확인 후 `AuthUtil.register` 호출
+     * - 성공 시 로그인 페이지로 전환
+     */
+    const handleRegister = (event) => {
+        event.preventDefault();
+        if (password !== confirmPassword) {
+            setErrorMessage("비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
+        const result = AuthUtil.register(email, password);
+        if (result.success) {
+            alert(result.message);
+            setMode("signin"); // 회원가입 후 로그인 페이지로 전환
+        } else {
+            setErrorMessage(result.message);
+        }
+    };
+
+    /**
+     * 로그아웃 핸들러
+     * - `AuthUtil.logout()`을 호출하여 로그인 상태 초기화
+     */
+    const handleLogout = () => {
+        AuthUtil.logout();
+        setIsLoggedIn(false);
+        alert("로그아웃 되었습니다.");
+    };
 
     return (
-        <div>
-            <Modal show={show} onHide={handleClose}>
-                <div>
-                    <h2>{mode === "signin" ? "Sign In" : "Sign Up"}</h2>
+        <div className="signin-container">
+            <div className="signin-modal">
+                {/* 로그인한 상태라면 로그아웃 버튼 표시 */}
+                {isLoggedIn ? (
+                    <div>
+                        <h2 className="signin-title">이미 로그인된 상태입니다.</h2>
+                        <button className="signin-button" onClick={handleLogout}>로그아웃</button>
+                    </div>
+                ) : (
+                    <>
+                        <h2 className="signin-title">{mode === "signin" ? "로그인" : "회원가입"}</h2>
 
-                    <input type="email" placeholder="Enter your email" value = {email}/>
-                    <input type="password" placeholder="Enter your password" value = {password}/>
-                    {/* email, password 유효성 검사 로직 추가할 것. */}
+                        {errorMessage && <p className="signin-error">{errorMessage}</p>}
 
-                    {mode === "signup" && <input type="password" placeholder="Confirm your password" value = {confirmPassword}/>}
-                    {mode === "signin" ? (
-                        <div>
-                            <input type="checkbox" id="remember" />
-                            <label htmlFor="remember">Remember me</label>
-                        </div>
-                    ) : (
-                        <div>
-                            <input type="checkbox" id="terms" />
-                            <label htmlFor="terms">I agree to the Terms and Conditions</label>
-                        </div>
-                    )}
+                        <input 
+                            type="email" 
+                            placeholder="이메일을 입력해주세요!" 
+                            className="signin-input"
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <input 
+                            type="password" 
+                            placeholder="비밀번호를 입력해주세요!" 
+                            className="signin-input"
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
 
-                    <button>{mode === "signin" ? "Login" : "Register"}</button>
-                    <p>
-                        {mode === "signin" ? "Don't have an account? " : "Already have an account? "}
-                        <span onClick={() => setMode(mode === "signin" ? "signup" : "signin")} style={{ cursor: "pointer", color: "blue" }}>
-                            {mode === "signin" ? "Sign up" : "Sign in"}
-                        </span>
-                    </p>
+                        {mode === "signup" && (
+                            <input 
+                                type="password" 
+                                placeholder="비밀번호를 다시 한 번 입력해주세요!" 
+                                className="signin-input"
+                                value={confirmPassword} 
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                        )}
 
-                    <button onClick={handleClose}>Close</button>
-                    {/* 로그인 및 회원가입 폼 닫는 버튼 */}
-                </div>
-            </Modal>
+                        {mode === "signin" ? (
+                            <div className="signin-checkbox-container">
+                                <input type="checkbox" id="remember" className="signin-checkbox" />
+                                <label htmlFor="remember">Remember me</label>
+                            </div>
+                        ) : (
+                            <div className="signin-checkbox-container">
+                                <input type="checkbox" id="terms" className="signin-checkbox" />
+                                <label htmlFor="terms">이용약관에 동의합니다.</label>
+                            </div>
+                        )}
+
+                        <button 
+                            className="signin-button"
+                            onClick={mode === "signin" ? handleLogin : handleRegister}
+                        >
+                            {mode === "signin" ? "로그인" : "회원가입"}
+                        </button>
+
+                        <p>
+                            {mode === "signin" ? "계정이 없으신가요? " : "이미 계정이 있으신가요? "}
+                            <span 
+                                className="signin-link"
+                                onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+                            >
+                                {mode === "signin" ? "회원가입" : "로그인"}
+                            </span>
+                        </p>
+                    </>
+                )}
+            </div>
         </div>
     );
 };
 
-export default LoginSignup;
+export default Signin;

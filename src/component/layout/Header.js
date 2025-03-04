@@ -3,7 +3,7 @@ import { Link , useNavigate} from 'react-router-dom';
 import './Header.css';
 import Home from '../home/HomeMain';
 import Blog from '../blog/BlogMain';
-import {handleAuth} from '../auth/AuthUtil';
+import AuthUtil from '../auth/AuthUtil';
 
 function Header(){
     const navigate = useNavigate();
