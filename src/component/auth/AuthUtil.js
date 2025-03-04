@@ -11,6 +11,7 @@ export const AuthUtil = {
         // 이메일 중복 검사
         const existingUser = users.find(user => user.email === email);
         if (existingUser) {
+            console.log("이미 가입된 이메일입니다.")
             return { success: false, message: "이미 가입된 이메일입니다." };
         }
 
@@ -18,6 +19,7 @@ export const AuthUtil = {
         users.push({ email, password });
         localStorage.setItem("users", JSON.stringify(users));
 
+        console.log("회원가입 성공!")
         return { success: true, message: "회원가입 성공!" };
     },
 
@@ -34,10 +36,15 @@ export const AuthUtil = {
             // 토큰 생성 (간단한 랜덤 문자열)
             const token = Math.random().toString(36).substr(2) + Date.now().toString(36);
             
+            console.log("토근 생성완료 : ", token);
+
             // 현재 로그인한 유저 정보 및 토큰 저장
             localStorage.setItem("authToken", token);
             localStorage.setItem("currentUser", JSON.stringify({ email, token }));
 
+            window.dispatchEvent(new Event("storage"));
+
+            console.log("로그인 성공!");
             return { success: true, message: "로그인 성공!", token };
         } else {
             return { success: false, message: "이메일 또는 비밀번호가 올바르지 않습니다." };
@@ -51,6 +58,8 @@ export const AuthUtil = {
     logout: () => {
         localStorage.removeItem("authToken");
         localStorage.removeItem("currentUser");
+
+        window.dispatchEvent(new Event("storage"));
     },
 
     /**
