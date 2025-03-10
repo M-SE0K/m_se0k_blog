@@ -9,7 +9,7 @@ import Signin from '../auth/sign-in/Signin';
 function Header(){
     const navigate = useNavigate();
     
-    //로그인 상태 관리 : 로컬스토리지에 저장된 token을 이용한 상태 관리
+    //로그인 상태 관리 : 로컬스토리지에 저장된 token 유무를 통한 로그인 상태 관리
     const [mode, setMode] = useState(AuthUtil.isAuthenticated() ? "logout" : "signin");
     
     useEffect(() => {
@@ -35,6 +35,10 @@ function Header(){
         navigate('/signin');
     };
 
+    const handleWriteBlogClick = () => {
+        navigate('/write-blog');
+    }
+
     return(
         <div id='header container'>
             <header className={'app-header'}>
@@ -47,10 +51,11 @@ function Header(){
                     </div>
                 </div>
                 <div className='header-right'>
-                    <button className='login-logout-button' onClick={handleAuthClick}>
-                        {mode == "signin" ? "로그인" : "로그아웃"}
-                    </button>
-                </div>
+                    <li><Link to="/write-blog">글 작성하기</Link></li>
+                    <button className='login-logout-button' onClick={handleAuthClick}> 
+                            {mode == "signin" ? "로그인" : "로그아웃"}
+                        </button>
+                    </div>
             </header>
         </div>
     );

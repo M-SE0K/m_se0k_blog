@@ -1,0 +1,57 @@
+/* 전체 컨테이너 - 화면을 절반으로 나눔 */
+.blog-container {
+    display: flex;
+    height: 100vh; /* 화면 전체 높이 */
+    width: 100%;
+}
+
+/* 왼쪽 - 가장 핫한 블로그 (50%) */
+.blog-hot-container {
+    flex: 1; /* 전체 너비의 50% */
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    border-right: 3px solid #ccc; /* 오른쪽 구분선 추가 */
+}
+
+/* 오른쪽 - 새롭게 작성된 블로그, 구독한 블로그, 내 블로그 (50%) */
+.blog-right-container {
+    flex: 1; /* 전체 너비의 50% */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 세로로 3등분 - 동일한 높이 */
+.blog-new-container,
+.blog-sub-container,
+.blog-my-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative; /* 구분선 추가를 위한 상대 위치 */
+}
+
+.blog-new-container{
+    border-bottom: 2px solid #ccc; /* 구분선 추가 */   
+}
+
+.blog-sub-container{
+    border-bottom: 2px solid #ccc; /* 구분선 추가 */
+}
+
+.blog-my-container{
+    border-bottom: 2px solid #ccc; /* 구분선 추가 */
+}
+
+/* 세션별로 약간의 그림자 효과 추가 */
+.blog-hot-container,
+.blog-new-container,
+.blog-sub-container,
+.blog-my-container {
+    box-shadow: inset 0 -3px 3px rgba(0, 0, 0, 0.1); /* 내부 그림자 효과 */
+}
